@@ -1,0 +1,65 @@
+#! /usr/bin/env ruby
+
+require 'rubygems'
+require "monit_collectd"
+require 'yaml'
+
+@config = ""
+def start
+  config = {}
+  config_valid = true
+  unless @config.nil?
+    if  File.exist? @config
+      begin
+        config = YAML.load(File.open(@config))
+      rescue
+        config_valid = false
+        STDOUT.puts "file #{@config} is not a right yaml file"
+        STDOUT.puts "here's a an example of valid yaml file:"
+        STDOUT.puts File.read(__FILE__.dirname + '../config/config.yml')
+      end
+    else
+      STDOUT.puts "file #{@config} doesn't exist!"
+    end
+  end
+  if config_valid
+    puts "[#{Time.now}]: Starting service monit_collectd v#{MonitCollectd::VERSION}"
+    collector = MonitCollectd::Interface.new config
+    EM.run do
+      collector.start_collection
+    end
+  end
+end
+
+def usage
+  STDOUT.puts <<-EOF
+  monit_collectd: a script grabbing information from a Monit instance and sending them to a Collectd Server
+  Usage:
+    monit_collectd # start an instance with default value (see -h for the default values)
+    monit_collectd -c path/to/config/file.yml # start an instance with the options put in the config_file
+    monit_collectd -v # give the version of monit_collectd
+    monit_collectd -h # print the help
+  EOF
+end
+
+def help
+ usage
+ STDOUT.puts "The configuration format is in yml and here an example :"
+ STDOUT.puts File.read(File.dirname(__FILE__) + '/../config/config.yml')
+end
+
+case ARGV[0]
+when nil
+  @config = nil
+when "-c"
+  @config = ARGV[1]
+  start
+when "-h"
+  help
+when "-v"
+  STDOUT.puts MonitCollectd::VERSION
+else
+  usage
+end
+
+
