@@ -1,0 +1,28 @@
+PATH
+  remote: .
+  specs:
+    monit_collectd (0.0.1)
+      collectd
+      eventmachine
+      monit
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activesupport (3.2.12)
+      i18n (~> 0.6)
+      multi_json (~> 1.0)
+    collectd (0.0.15)
+    eventmachine (1.0.0)
+    i18n (0.6.1)
+    monit (0.2.2)
+      activesupport (~> 3.2.2)
+      nokogiri (~> 1.5.2)
+    multi_json (1.5.1)
+    nokogiri (1.5.6)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  monit_collectd!
